@@ -10,12 +10,10 @@ namespace OdeToFood.Controllers
     public class HomeController : Controller
     {
         IRestaurantData _restaurantData;
-        IGreeter _greeter;
 
-        public HomeController(IRestaurantData restaurantData, IGreeter greeter)
+        public HomeController(IRestaurantData restaurantData)
         {
             _restaurantData = restaurantData;
-            _greeter = greeter;
         }
 
         [AllowAnonymous]
@@ -23,7 +21,6 @@ namespace OdeToFood.Controllers
         {
             var model = new HomeIndexViewModel();
             model.Restaurants = _restaurantData.GetAll();
-            model.CurrentMessage = _greeter.GetMessageOfTheDay();
             
             return View(model);
         }
