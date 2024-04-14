@@ -1,31 +1,66 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OdeToFood.Models;
+using OdeToFood.Services;
+using OdeToFood.ViewModels;
 
-namespace OdeToFood.Controllers;
-
-public class HomeController : Controller
+namespace OdeToFood.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    [Authorize]
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        IRestaurantData _restaurantData;
+        IGreeter _greeter;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(IRestaurantData restaurantData, IGreeter greeter)
+        {
+            _restaurantData = restaurantData;
+            _greeter = greeter;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        [AllowAnonymous]
+        public IActionResult Index()
+        {
+            var model = new HomeIndexViewModel();
+            model.Restaurants = _restaurantData.GetAll();
+            model.CurrentMessage = _greeter.GetMessageOfTheDay();
+            
+            return View(model);
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Details(int id)
+        {
+            var model = _restaurantData.Get(id);
+            if (model == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(RestaurantEditModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var newRestaurant = new Restaurant();
+                newRestaurant.Name = model.Name;
+                newRestaurant.Cuisine = model.Cuisine;
+
+                newRestaurant = _restaurantData.Add(newRestaurant);
+
+                return RedirectToAction("Details", new {id = newRestaurant.Id});
+            }
+
+            return View();
+        }
     }
 }
