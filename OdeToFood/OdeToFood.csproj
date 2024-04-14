@@ -4,7 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>aspnet-OdeToFood-FCB9BCE8-5DF0-4455-B3D0-A599BE527A6D</UserSecretsId>
+        <UserSecretsId>aspnet-OdeToFood-3F186639-43B6-46C2-BDAF-3137B79224A8</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
