@@ -10,5 +10,6 @@ namespace OdeToFood.Models
         [Required, MaxLength(80)]
         public string Name { get; set; }
         public CuisineType Cuisine { get; set; }
+        public virtual ICollection<Review>? Reviews { get; set; } = null!;
     }
 }
